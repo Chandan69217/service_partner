@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:service_partner/retailer_ui/screens/retailer_dashboard.dart';
 import 'package:service_partner/screens/authentication/registration_screen.dart';
 import 'package:service_partner/screens/scan_code_screen.dart';
 import 'package:service_partner/widgets/custom_button.dart';
@@ -9,6 +10,8 @@ import 'forget_screen.dart';
 
 
 class LoginScreen extends StatefulWidget {
+  final int selectedOption;
+  LoginScreen({super.key,required this.selectedOption});
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
@@ -117,7 +120,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
                 SizedBox(height: screenHeight * 0.02),
-                CustomElevatedButton(text: 'Log In', onPressed: (){}),
+                CustomElevatedButton(text: 'Log In', onPressed: (){
+                  if(widget.selectedOption == 0){
+
+                  }else{
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>RetailerDashboard()));
+                  }
+                }),
                 SizedBox(height: screenHeight * 0.02),
                 CustomElevatedButton(text: 'Log In with OTP', onPressed: (){
                   showOtpDialog(context,otpControllers: _otpControllers);
