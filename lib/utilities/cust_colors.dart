@@ -8,4 +8,5 @@ class CustColors{
   static const Color green =  Color(0xFF90EE90);
   static const Color nile_blue =  Color(0xFF1E3A5F);
   static const Color cyan=  Color(0xFFD0E7F9);
+  static const Color blue=  Color(0xFF0000EE);
 }

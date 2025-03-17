@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.hardware.camera.flash"/>
     <application
-        android:label="service_partner"
+        android:label="Krishco"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

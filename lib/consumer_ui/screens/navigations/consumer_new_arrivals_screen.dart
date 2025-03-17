@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:service_partner/utilities/cust_colors.dart';
 
 
-class RetailerNewArrivalsScreen extends StatelessWidget {
+class ConsumerNewArrivalsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;

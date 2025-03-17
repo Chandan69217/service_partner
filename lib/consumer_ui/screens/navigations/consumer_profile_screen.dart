@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:service_partner/utilities/cust_colors.dart';
 
 
-class RetailerProfileScreen extends StatefulWidget {
+class ConsumerProfileScreen extends StatefulWidget {
   @override
-  State<RetailerProfileScreen> createState() => _RetailerProfileScreenState();
+  State<ConsumerProfileScreen> createState() => _ConsumerProfileScreenState();
 }
 
-class _RetailerProfileScreenState extends State<RetailerProfileScreen> {
+class _ConsumerProfileScreenState extends State<ConsumerProfileScreen> {
   String? _selectedRegistrationType;
   List<String> _radioOptions = ['Consumer','Plumber','Dealer','Distributor',];
 

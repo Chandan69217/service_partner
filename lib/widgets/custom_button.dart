@@ -6,36 +6,39 @@ class CustomElevatedButton extends StatelessWidget {
   final VoidCallback onPressed;
   final Color backgroundColor;
   final Color forgroundColor;
+  final double? width;
   final double elevation; // Added elevation property
 
   const CustomElevatedButton({
     required this.text,
     required this.onPressed,
-    this.backgroundColor = CustColors.yellow,
-    this.forgroundColor = Colors.black,
-    this.elevation = 4.0, // Default elevation
+    this.backgroundColor = CustColors.nile_blue,
+    this.forgroundColor = Colors.white,
+    this.elevation = 4.0,
+    this.width,
   });
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    double screenWidth = width??MediaQuery.of(context).size.width;
     return SizedBox(
       width: screenWidth,
+      // height: screenWidth * 0.3,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor, // Background color
+          backgroundColor: backgroundColor,
           padding: EdgeInsets.symmetric(vertical: screenWidth * 0.035),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(screenWidth * 0.013),
+            borderRadius: BorderRadius.circular(screenWidth * 0.035),
           ),
-          elevation: elevation, // Set the elevation for the shadow effect
+          elevation: elevation,
         ),
         child: Text(
           text,
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: screenWidth * 0.04,
+            fontSize: width!=null ? width!*0.1:screenWidth * 0.04,
             height: 1,
             fontWeight: FontWeight.w400,
             color: forgroundColor,

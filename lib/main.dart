@@ -15,11 +15,15 @@ class MyApp extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.dark,
-        statusBarColor: Colors.transparent
-      )
+        statusBarColor: Colors.transparent,
+      ),
     );
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      title: 'Krishco',
       theme: themeData(context),
       home: SplashScreen(),
     );

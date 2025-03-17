@@ -99,7 +99,7 @@ class _ScanCodeScreenState extends State<ScanCodeScreen> {
 
               // Input Field for Code
 
-              CustomTextField(hintText: 'Enter Code', prefixIcon: Icon(Icons.qr_code_scanner),radius: screenWidth * 0.01,),
+              CustomFormTextField(hintText: 'Enter Code', prefixIcon: Icon(Icons.qr_code_scanner),radius: screenWidth * 0.01,),
               SizedBox(height: screenHeight * 0.08,),
               // Proceed Button
               CustomElevatedButton(text: 'Proceed', onPressed: (){}),

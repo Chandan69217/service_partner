@@ -353,7 +353,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginScreen(selectedOption: _selectedOptionKey,)));
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginScreen()));
                     },
                     icon: Icon(Icons.start, size: screenWidth * 0.06),
                     label: Text(

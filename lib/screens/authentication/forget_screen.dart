@@ -129,8 +129,10 @@ class ForgetPasswordScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Forget Password'),
-        backgroundColor: CustColors.yellow,
+        foregroundColor: CustColors.white,
+        titleSpacing: 0,
+        title: Text('Forget Password',style: TextStyle(fontSize: screenWidth * 0.05),),
+        backgroundColor: CustColors.nile_blue,
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
@@ -158,7 +160,7 @@ class ForgetPasswordScreen extends StatelessWidget {
               ),
               SizedBox(height: screenHeight * 0.05),
 
-              CustomTextField(
+              CustomFormTextField(
                 hintText: 'Email or Mobile Number',
                 prefixIcon: Icon(Icons.email),
                 keyboardType: TextInputType.emailAddress,
@@ -174,15 +176,15 @@ class ForgetPasswordScreen extends StatelessWidget {
 
                 },
               ),
-              SizedBox(height: 4.0,),
-              Align(
-                alignment: Alignment.centerRight,
-                child: CustomTextButton(
-                  label: 'New User Registration',
-                  foregroundColor: Colors.grey,
-                ),
-              ),
-              SizedBox(height: screenHeight * 0.05),
+              // SizedBox(height: 4.0,),
+              // Align(
+              //   alignment: Alignment.centerRight,
+              //   child: CustomTextButton(
+              //     label: 'New User Registration',
+              //     foregroundColor: Colors.grey,
+              //   ),
+              // ),
+              SizedBox(height: screenHeight * 0.07),
 
               CustomTextButton(
                 label: 'Back to Login',
