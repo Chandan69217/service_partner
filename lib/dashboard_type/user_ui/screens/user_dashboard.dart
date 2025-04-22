@@ -1,60 +1,79 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:service_partner/retailer_ui/screens/navigations/retailer_home_screen.dart';
-import 'package:service_partner/retailer_ui/screens/navigations/retailer_helpline_screen.dart';
+import 'package:service_partner/dashboard_type/user_ui/screens/navigations/user_helpline_screen.dart';
+import 'package:service_partner/dashboard_type/user_ui/screens/navigations/user_home_screen.dart';
+import 'package:service_partner/dashboard_type/user_ui/screens/navigations/user_myearnings_screen.dart';
+import 'package:service_partner/dashboard_type/user_ui/screens/navigations/user_redemption_screen.dart';
 import 'package:service_partner/screens/authentication/login_screen.dart';
 import 'package:service_partner/screens/splash/splash_screen.dart';
 import 'package:service_partner/utilities/cust_colors.dart';
 
-class RetailerDashboard extends StatefulWidget {
+
+class UserDashboard extends StatefulWidget {
   @override
-  State<RetailerDashboard> createState() => _RetailerDashboardState();
+  State<UserDashboard> createState() => _UserDashboardState();
 }
 
-class _RetailerDashboardState extends State<RetailerDashboard> {
+class _UserDashboardState extends State<UserDashboard> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _currentIndex = 0;
   List<String> _title = ['Home','My Earnings','My Redemption','Support'];
-  List<Widget> _screens = [RetailerHomeScreen(),RetailerHomeScreen(),RetailerHomeScreen(),HelplineScreen(),];
+  List<Widget> _screens = [UserHomeScreen(),MyEarningsScreen(),UserRedemptionScreen(),UserHelplineScreen(),];
+
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
-        foregroundColor: Colors.white,
-        backgroundColor: CustColors.nile_blue,
+        leading: IconButton(onPressed: (){
+          _scaffoldKey.currentState?.openDrawer();
+        }, icon: Icon(Icons.menu,color: CustColors.white,)),
         titleSpacing: 0,
         title: Text(
           _title[_currentIndex],
-          style: TextStyle(fontSize: screenWidth * 0.05),
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustColors.white),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 5.0),
-            child: InkWell(
-              radius: 50.0,
-              borderRadius: BorderRadius.circular(50.0),
-              splashColor: Colors.black12,
-              onTap: () {},
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Badge(
-                  label: Text('1'),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Icon(
-                      FontAwesomeIcons.bell,
-                      color: Colors.white,
-                      size: screenWidth * 0.054,
-                    ),
-                  ),
-                ),
+          Stack(
+            children: [
+              IconButton(
+                icon: Icon(Icons.shopping_cart,color: CustColors.white,),
+                onPressed: () {},
               ),
-            ),
-          )
+              Positioned(
+                right: 8,
+                top: 8,
+                child: CircleAvatar(
+                  radius: 8,
+                  backgroundColor: Colors.green,
+                  child: const Text("3", style: TextStyle(fontSize: 12, color: Colors.white)),
+                ),
+              )
+            ],
+          ),
+          Stack(
+            children: [
+              IconButton(
+                icon: Icon(Icons.notifications,color: CustColors.white,),
+                onPressed: () {},
+              ),
+              Positioned(
+                right: 8,
+                top: 8,
+                child: CircleAvatar(
+                  radius: 8,
+                  backgroundColor: Colors.green,
+                  child: const Text("1", style: TextStyle(fontSize: 12, color: Colors.white)),
+                ),
+              )
+            ],
+          ),
         ],
       ),
-      body: _screens[_currentIndex],
+      body: IndexedStack(index: _currentIndex, children: _screens),
       drawer: _drawerUI(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
@@ -198,7 +217,7 @@ class _RetailerDashboardState extends State<RetailerDashboard> {
             minLeadingWidth: 0,
             leading: Icon(menuItems[index]['icon'], color: Colors.black54,size: screenWidth * 0.07,),
             title: Text(menuItems[index]['label'],
-                style: TextStyle(fontSize: screenWidth*0.05, fontWeight: FontWeight.w500)),
+                style: Theme.of(context).textTheme.bodyLarge,),
             onTap: () {},
           );
         },

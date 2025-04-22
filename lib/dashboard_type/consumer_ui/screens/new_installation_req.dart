@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:service_partner/utilities/cust_colors.dart';
 
-import '../../utilities/cust_colors.dart';
 
 class NewInstallationReqScreen extends StatelessWidget {
   const NewInstallationReqScreen({super.key});

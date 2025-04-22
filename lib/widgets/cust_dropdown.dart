@@ -69,18 +69,15 @@
 //     );
 //   }
 // }
-
-
-
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
-
 
 class CustDropdown<T> extends StatefulWidget {
   final String hintText;
   final List<T> items;
   final bool excludeSelected;
   final ValueChanged<T?>? onChanged;
+  final T? value;
   final String? Function(T?)? validator;
 
   const CustDropdown({
@@ -90,6 +87,7 @@ class CustDropdown<T> extends StatefulWidget {
     required this.excludeSelected,
     this.validator,
     this.onChanged,
+    this.value,
   }) : super(key: key);
 
   @override
@@ -185,6 +183,12 @@ class _CustDropdownState<T> extends State<CustDropdown<T>> {
     }
   }
 
+  String _getDisplayText() {
+    final current = widget.value ?? selectedValue;
+    return current != null ? current.toString() : widget.hintText;
+  }
+
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -196,7 +200,7 @@ class _CustDropdownState<T> extends State<CustDropdown<T>> {
         });
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
+        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02,vertical: screenWidth * 0.025),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.black),
           borderRadius: BorderRadius.circular(screenWidth * 0.013),
@@ -210,8 +214,8 @@ class _CustDropdownState<T> extends State<CustDropdown<T>> {
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  selectedValue != null ? selectedValue.toString() : widget.hintText,
-                  style: TextStyle(fontSize: screenWidth * 0.04,height: 1),
+                  _getDisplayText(),
+                    style: TextStyle(fontSize: screenWidth * 0.04,height: 1),
                   textAlign: TextAlign.start,
                 ),
               ),
@@ -222,6 +226,18 @@ class _CustDropdownState<T> extends State<CustDropdown<T>> {
       ),
     );
   }
+
+  @override
+  void didUpdateWidget(covariant CustDropdown<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.value != oldWidget.value) {
+      setState(() {
+        selectedValue = widget.value;
+      });
+    }
+  }
+
+
 }
 
 

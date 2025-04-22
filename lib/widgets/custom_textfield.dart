@@ -63,6 +63,7 @@ class CustomFormTextField extends StatelessWidget {
   final bool isborder;
   final String? label;
   final int? maxLength;
+  final Key? key;
   final String? Function(String? value)? validator;
 
   CustomFormTextField({
@@ -77,6 +78,7 @@ class CustomFormTextField extends StatelessWidget {
     this.suffixIcon,
     this.validator,
     this.maxLength,
+    this.key,
     this.isborder = true,
   });
 
@@ -84,6 +86,7 @@ class CustomFormTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return Column(
+      key: key,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if(label != null) Text(label!,style: TextStyle(height: 2),),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:service_partner/utilities/cust_colors.dart';
 
 
-class RetailerClaimPointScreen extends StatelessWidget {
+class UserClaimPointScreen extends StatelessWidget {
   final List<Map<String, String>> products = [
     {
       "category": "CPVC - PIPE",

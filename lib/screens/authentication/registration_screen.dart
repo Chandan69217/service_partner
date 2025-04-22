@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:service_partner/models/district_list.dart';
 import 'package:service_partner/models/state_list.dart';
 import 'package:service_partner/utilities/cust_colors.dart';
+import 'package:service_partner/utilities/get_address_from_api/get_address.dart';
 import 'package:service_partner/widgets/cust_loader.dart';
 import '../../models/city_list.dart';
 import '../../utilities/api_urls.dart';
@@ -14,8 +15,9 @@ import '../../widgets/cust_dropdown.dart';
 import '../../widgets/cust_snack_bar.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_textfield.dart';
-import '../../widgets/otp_inputfield.dart';
-import '../splash/splash_screen.dart';
+
+
+
 
 class RegistrationScreen extends StatefulWidget {
   @override
@@ -35,92 +37,37 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String? _selectedCity;
   bool _passwordVisibility = false;
   bool _confirmPasswordVisibility = false;
+  DistrictList _districtList = DistrictList.fromJson({});
+  CityList _cityList = CityList.fromJson({});
   final _formKey = GlobalKey<FormState>();
   bool otpSent = false;
   bool _isLoading = false;
-  List<StateList> _stateList = [];
-  DistrictList _districtList = DistrictList.fromJson({});
-  CityList _cityList = CityList.fromJson({});
+  bool isLoadingDistricts = false;
+  bool isLoadingCities = false;
+  final List<String> groupNames = [
+    "User",
+    "Customer",
+    "Influencer",
+    "Channel Partner"
+  ];
+
   @override
   void initState() {
     super.initState();
   }
 
-  Future<bool> _init() async{
+  void _getDistrictList(String stateName)async{
+    isLoadingDistricts = true;
+    _districtList = await GetAddress().getDistrictList(context, stateName);
+    setState(() {
+    });
+  }
 
-    // Get State List Api Call
-    try {
-      var uri = Uri.https(Urls.base_url,Urls.get_state_list);
-
-      var response = await get(uri, headers: {
-        'Content-Type': 'application/json',
-      });
-
-      // Check status code
-      if (response.statusCode == 200) {
-        var rawData = json.decode(response.body);
-        bool isSuccess = rawData['isScuss']??false;
-        if(isSuccess){
-          List<dynamic> statesData = rawData['data'];
-          _stateList = statesData
-              .map((value) => StateList.fromJson(value as Map<String, dynamic>))
-              .toList();
-        }
-      } else {
-        await handleHttpResponse(context, response);
-      }
-    } catch (exception, trace) {
-      print('Exception: $exception, Trace: $trace');
-    }
-
-    // Get District API Call
-
-    try {
-      var uri = Uri.https(Urls.base_url,Urls.get_district_list);
-
-      var response = await get(uri, headers: {
-        'Content-Type': 'application/json',
-      });
-
-      // Check status code
-      if (response.statusCode == 200) {
-        var rawData = json.decode(response.body);
-        bool isSuccess = rawData['isScuss']??false;
-        if(isSuccess){
-          var districtData = rawData['data'][0] as Map<String, dynamic>;
-          _districtList = DistrictList.fromJson(districtData);
-        }
-      } else {
-        await handleHttpResponse(context, response);
-      }
-    } catch (exception, trace) {
-      print('Exception: $exception, Trace: $trace');
-    }
-
-    // Get City API Call
-
-    try {
-      var uri = Uri.https(Urls.base_url,Urls.get_city_list);
-
-      var response = await get(uri, headers: {
-        'Content-Type': 'application/json',
-      });
-
-      // Check status code
-      if (response.statusCode == 200) {
-        var rawData = json.decode(response.body);
-        bool isSuccess = rawData['isScuss']??false;
-        if(isSuccess){
-          var cityData = rawData['data'][0] as Map<String, dynamic>;
-          _cityList = CityList.fromJson(cityData);
-        }
-      } else {
-        await handleHttpResponse(context, response);
-      }
-    } catch (exception, trace) {
-      print('Exception: $exception, Trace: $trace');
-    }
-    return true;
+  void _getCityList(String distrName)async{
+    isLoadingCities = true;
+    _cityList = await GetAddress().getCityList(context, distrName);
+    setState(() {
+    });
   }
 
   @override
@@ -139,7 +86,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
         child: FutureBuilder(
-            future: _init(),
+            future: GetAddress().getStateList(context),
             builder: (context,snapshot) {
               if(snapshot.hasData){
                 return SingleChildScrollView(
@@ -173,9 +120,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ),
                         SizedBox(height: screenWidth * 0.02,),
                         Text('Select type of account'),
-                        GroupTypeSelector(
-                          onSelected: (value){
-                            _selectedGroup = value;
+                        SizedBox(height: screenWidth * 0.02,),
+                        // GroupTypeSelector(
+                        //   onSelected: (value){
+                        //     _selectedGroup = value;
+                        //   },
+                        // ),
+                        CustDropdown<String>(
+                          hintText: 'Select Group',
+                          items: groupNames,
+                          excludeSelected: false,
+                          onChanged: (value) {
+                            if(value != null){
+                              setState((){
+                                _selectedGroup = value;
+                              });
+                            }
                           },
                         ),
                         SizedBox(
@@ -242,36 +202,50 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                               CustDropdown<StateList>(
                                 hintText: 'Select State',
-                                items: _stateList,
+                                items: snapshot.data!,
                                 excludeSelected: false,
                                 onChanged: (value) {
                                   if(value != null){
                                     refresh((){
+                                      isLoadingDistricts = false;
+                                      isLoadingCities = false;
                                       _selectedState = value.stat;
+                                      _selectedDistrict = null;
+                                      _selectedCity = null;
+                                      _districtList = DistrictList.fromJson({});
+                                      if(_selectedState != null)
+                                        _getDistrictList(_selectedState!);
                                     });
                                   }
                                 },
                               ),
                               Visibility(
-                                visible: _selectedState != null,
+                                visible: _selectedState != null && isLoadingDistricts,
                                 child: CustDropdown<String>(
                                   hintText: 'Select District',
+                                  value: _selectedDistrict,
                                   items: _districtList.distr,
                                   excludeSelected: false,
                                   onChanged: (value) {
                                     if(value != null){
                                       refresh((){
+                                        isLoadingCities = false;
                                         _selectedDistrict = value;
+                                        _selectedCity = null;
+                                        _cityList = CityList.fromJson({});
+                                        if(_selectedDistrict != null)
+                                          _getCityList(_selectedDistrict!);
                                       });
                                     }
                                   },
                                 ),
                               ),
                               Visibility(
-                                visible: _selectedDistrict != null,
+                                visible: _selectedDistrict != null && isLoadingCities,
                                 child: CustDropdown<String>(
                                   hintText: 'Select City',
                                   items: _cityList.city,
+                                  value: _selectedCity,
                                   excludeSelected: false,
                                   onChanged: (value) {
                                     if(value != null){
@@ -372,7 +346,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                 );
               }else{
-                return Center(child: CustLoader());
+                return Center(child: CustLoader(color: CustColors.nile_blue,));
               }
             }
         ),
@@ -512,11 +486,11 @@ class _GroupTypeSelectorState extends State<GroupTypeSelector> {
     });
   }
 
-  final List<String> groupTypes = [
-    "Retailer",
-    "Wholesaler",
-    "Consumer",
-    "Admin"
+  final List<String> groupNames = [
+    "User",
+    "Customer",
+    "Influencer",
+    "Channel Partner"
   ];
 
   String selectedGroup = "Retailer";
@@ -527,7 +501,7 @@ class _GroupTypeSelectorState extends State<GroupTypeSelector> {
     double screenHeight = MediaQuery.of(context).size.height;
     return Wrap(
       spacing: 8.0,
-      children: groupTypes.map((group) {
+      children: groupNames.map((group) {
         return ChoiceChip(
           label: Text(
             group,
@@ -548,6 +522,108 @@ class _GroupTypeSelectorState extends State<GroupTypeSelector> {
           },
         );
       }).toList(),
+    );
+  }
+}
+
+
+
+
+
+
+
+class DropDownAlertExample extends StatefulWidget {
+  @override
+  _DropDownAlertExampleState createState() => _DropDownAlertExampleState();
+}
+
+class _DropDownAlertExampleState extends State<DropDownAlertExample> {
+  String? selectedValue;
+
+  final List<String> groupNames = [
+    "User",
+    "Customer",
+    "Influencer",
+    "Channel Partner"
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Drop-down in Alert")),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Container to display selected value
+            Container(
+              padding: EdgeInsets.all(15),
+              margin: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade100,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                selectedValue ?? "No selection yet",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+
+            ElevatedButton(
+              onPressed: () {
+                showDropDownDialog(context);
+              },
+              child: Text("Select Group"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  void showDropDownDialog(BuildContext context) {
+    String? tempSelectedValue = selectedValue; // Store temporary value
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Select a Group"),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return DropdownButton<String>(
+                value: tempSelectedValue,
+                hint: Text("Choose an option"),
+                isExpanded: true,
+                items: groupNames.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  setState(() {
+                    tempSelectedValue = newValue;
+                  });
+                },
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+                if (tempSelectedValue != null) {
+                  setState(() {
+                    selectedValue = tempSelectedValue; // Update main UI
+                  });
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

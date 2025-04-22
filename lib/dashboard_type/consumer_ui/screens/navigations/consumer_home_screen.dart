@@ -1,9 +1,11 @@
-import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:service_partner/screens/authentication/login_screen.dart';
+import 'package:service_partner/screens/splash/splash_screen.dart';
+import 'package:service_partner/utilities/cust_colors.dart';
+import 'package:service_partner/widgets/custom_slider/custom_slider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../utilities/cust_colors.dart';
 import '../new_installation_req.dart';
 import '../new_service_req_screen.dart';
 import 'consumer_new_arrivals_screen.dart';
@@ -32,7 +34,7 @@ class ConsumerHomeScreen extends StatelessWidget{
      body: SingleChildScrollView(
        child: Column(
          children: [
-           Slider(),
+           CustomSlider(),
            // Main Content Section
            Padding(
              padding: EdgeInsets.symmetric(
@@ -117,7 +119,11 @@ class ConsumerHomeScreen extends StatelessWidget{
                ],
              ),
            ),
-           SizedBox(height: screenWidth * 0.05,)
+           SizedBox(height: screenWidth * 0.05,),
+           ElevatedButton(onPressed: (){
+             Pref.instance.clear();
+             Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>LoginScreen()), (route)=>false);
+           }, child: Text('Logout'))
          ],
        ),
      ),
@@ -322,123 +328,3 @@ class ButtonWidget extends StatelessWidget {
 }
 
 
-class Slider extends StatefulWidget {
-  final VoidCallback? onPressed;
-
-  const Slider({super.key, this.onPressed});
-  @override
-  _SliderState createState() => _SliderState();
-}
-
-class _SliderState extends State<Slider> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-
-  List<String> imageUrls = [
-    'assets/retailer_assets/images/banner.webp',
-    'assets/retailer_assets/images/bestsellersbanner.webp',
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _startAutoSlide();
-  }
-
-  void _startAutoSlide() {
-    Timer.periodic(Duration(seconds: 3), (timer) {
-      if (_pageController.page == imageUrls.length - 1) {
-        _pageController.jumpToPage(0);
-      } else {
-        _pageController.nextPage(
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
-    return Center(
-      child: Container(
-        height: screenHeight * 0.28,
-        decoration: BoxDecoration(
-          // borderRadius: BorderRadius.circular(screenWidth*0.015),
-          color: Colors.white,
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: Colors.black.withOpacity(0.1),
-          //     offset: Offset(0, 4),
-          //     blurRadius: 8,
-          //   ),
-          // ],
-        ),
-        child: Stack(
-          fit: StackFit.expand,
-          alignment: Alignment.bottomCenter,
-          children: [
-            PageView.builder(
-              controller: _pageController,
-              itemCount: imageUrls.length,
-              onPageChanged: (page) {
-                setState(() {
-                  _currentPage = page;
-                });
-              },
-              itemBuilder: (context, index) {
-                return Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 1,
-                        color: Colors.black.withOpacity(0.1),
-                        // spreadRadius: 1,
-                      )
-                    ],
-                  ),
-                  child: ClipRRect(
-                    // borderRadius: BorderRadius.circular(10.0),
-                    child: Image.asset(
-                      imageUrls[index],
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                );
-              },
-            ),
-            // Indicator
-            Positioned(
-              bottom: (screenHeight * 0.3) * 0.05,
-              child: Row(
-                children: List.generate(imageUrls.length, (index) {
-                  return AnimatedContainer(
-                    duration: Duration(milliseconds: 300),
-                    margin: EdgeInsets.symmetric(horizontal: 4),
-                    height: (screenHeight * 0.23) * 0.041,
-                    width: _currentPage == index
-                        ? (screenHeight * 0.23) * 0.11
-                        : (screenHeight * 0.23) * 0.041,
-                    decoration: BoxDecoration(
-                      color: _currentPage == index ? Colors.white : Colors.grey,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  );
-                }),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

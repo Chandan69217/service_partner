@@ -3,8 +3,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:service_partner/utilities/cust_colors.dart';
 
 
-class HelplineScreen extends StatelessWidget {
-  const HelplineScreen({super.key});
+class UserHelplineScreen extends StatelessWidget {
+  const UserHelplineScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

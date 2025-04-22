@@ -3,7 +3,11 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:service_partner/retailer_ui/screens/retailer_dashboard.dart';
+import 'package:service_partner/dashboard_type/channel_partner_ui/channel_partner_dashboard.dart';
+import 'package:service_partner/dashboard_type/consumer_ui/screens/consumer_dashboard.dart';
+import 'package:service_partner/dashboard_type/dashboard_types.dart';
+import 'package:service_partner/dashboard_type/influencer_ui/influencer_dashboard.dart';
+import 'package:service_partner/dashboard_type/user_ui/screens/user_dashboard.dart';
 import 'package:service_partner/screens/authentication/registration_screen.dart';
 import 'package:service_partner/utilities/cust_colors.dart';
 import 'package:service_partner/widgets/cust_loader.dart';
@@ -17,6 +21,8 @@ import '../../widgets/custom_textfield.dart';
 import '../splash/splash_screen.dart';
 import 'forget_screen.dart';
 
+
+
 class LoginScreen extends StatefulWidget {
   LoginScreen({super.key,});
   @override
@@ -24,11 +30,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool _isChecked = false;
+  bool _isChecked = true;
   final List<TextEditingController> _otpControllers = List.generate(6, (_) => TextEditingController());
   bool _isLoading = false;
-  final TextEditingController _txtMobileEditingController = TextEditingController();
-  final TextEditingController _txtPasswordEditingController = TextEditingController();
+  final TextEditingController _txtMobileEditingController = TextEditingController(text: "1234567890");
+  final TextEditingController _txtPasswordEditingController = TextEditingController(text: "Shivamraj@1950");
   final _formKey = GlobalKey<FormState>();
   bool _passwordVisibility = false;
   @override
@@ -44,6 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
           initialValue: _isChecked,
           validator: (value) {
             if (value != true) {
+              showSnackBar(context: context, message: 'Accept the terms and conditions', title: 'Check the box',contentType: ContentType.warning);
               return 'Please accept the terms and conditions';
             }
             return null;
@@ -110,14 +117,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               controller: _txtMobileEditingController,
                               validator: (String? value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter username/email address ?';
+                                  return 'Please enter mobile no/email address ?';
                                 } else {
                                   return null;
                                 }
                               },
                               maxLength: 10,
                               keyboardType: TextInputType.number,
-                              label: 'username / Email Address',
+                              label: 'Mobile No / Email Address',
                               prefixIcon: Icon(Icons.phone),
                             ),
                             SizedBox(height: screenHeight * 0.02),
@@ -179,11 +186,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => RegistrationScreen()));
                         },
-                        child: Text('Create new account?'),
                         style: ButtonStyle(
                           foregroundColor:
                           MaterialStateProperty.all(CustColors.blue),
                         ),
+                        child: Text('Create new account?'),
                       ),
                       SizedBox(height: screenHeight * 0.02),
                       Row(
@@ -270,7 +277,7 @@ class _LoginScreenState extends State<LoginScreen> {
               title: 'Login Success',
               message: "Thank you for login !!",
               contentType: ContentType.success);
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>RetailerDashboard()));
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>_getScreenByGroup(group_type!)!));
         } else {
           await handleHttpResponse(context, response);
         }
@@ -285,6 +292,20 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _isLoading = false;
       });
+    }
+  }
+
+  Widget? _getScreenByGroup(String group_type){
+    switch(group_type){
+      case DashboardTypes.User:
+        return UserDashboard();
+      case DashboardTypes.customer:
+        return ConsumerDashboard();
+      case DashboardTypes.channel_partner:
+        return ChannelPartnerDashboard();
+      case DashboardTypes.influencer:
+        return InfluencerDashboard();
+      default: return null;
     }
   }
 
